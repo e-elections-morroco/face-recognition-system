@@ -121,8 +121,8 @@ def detect_person_with_face_eyes_nose_mouth(image_path: Path)->bool:
 
 
 if __name__ == "__main__":
-    # take_image()
-    print(detect_person_with_face_eyes_nose_mouth(Path("images/taked_1.jpg")))
+    take_image()
+    
 
 
 
