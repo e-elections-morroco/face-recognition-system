@@ -3,7 +3,7 @@ import face_recognition
 import cv2
 from pathlib import Path
 import os
-
+import numpy as np
 
 def get_image_encoding(image_path: Path) -> list | None:
     """
@@ -13,7 +13,7 @@ def get_image_encoding(image_path: Path) -> list | None:
         image_path (Path): Path to the image file.
 
     Returns:
-        list | None: Face encoding if successful, None if there's an error.
+        np.ndarray | None: The encoding of the specified image if found, None otherwise.
 
     Raises:
         None
@@ -47,7 +47,7 @@ def get_image_encoding_from_csv(image_name: str, csv_filename: Path) -> list | N
         csv_filename (Path): Path to the CSV file containing image encodings.
 
     Returns:
-        list | None: The encoding of the specified image if found, None otherwise.
+        np.ndarray | None: The encoding of the specified image if found, None otherwise.
     """
     # Read the CSV file
     with open(csv_filename, mode='r') as file:
@@ -56,7 +56,7 @@ def get_image_encoding_from_csv(image_name: str, csv_filename: Path) -> list | N
         for row in reader:
             if row[0] == image_name:
                 # Convert the string representation of encoding to a list of floats
-                encoding = [float(value) for value in row[1].replace('[','').replace(']','').split()]
+                encoding = np.array([float(value) for value in row[1].replace('[','').replace(']','').split()])
                 return encoding
     return None
 
@@ -110,5 +110,5 @@ if __name__=="__main__":
     # print(f"encodings saved to {csv_filename}")
 
     # Read encodings from the CSV file
-    image_encoding=get_image_encoding_from_csv("messi.jpg", Path(csv_filename))
-    print( image_encoding )
+    image_encoding=get_image_encoding(Path("images/messi.jpg"))
+    print( image_encoding.shape )
