@@ -44,14 +44,14 @@ def compare_faces(known_image_path: Path, unknown_image_path: Path) -> bool | No
         return None
 
 # Usage
-known_image_path = Path("ouail.jpg")
-unknown_image_path = Path("messi.jpeg")
+known_image_path = Path("images/ouail.jpg")
+unknown_image_path = Path("images/messi.jpeg")
 result = compare_faces(known_image_path, unknown_image_path)
 if result is not None:
     print("Face match (ouail,messi):", result)
 
 
-unknown_image_path = Path("unknown.jpeg")
+unknown_image_path = Path("images/unknown.jpeg")
 result = compare_faces(known_image_path, unknown_image_path)
 if result is not None:
     print("Face match (ouail,unknown):", result)
