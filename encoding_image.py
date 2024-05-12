@@ -75,10 +75,11 @@ def extract_encodings(image_folder:Path) -> dict:
     for image_name in os.listdir(image_folder):
         image_path = os.path.join(image_folder, image_name)
         face_encodings = get_image_encoding(Path(image_path))
-        if len(face_encodings) > 0:
-            encodings_dict[image_name] = face_encodings
-        else:
-            print(f"No face detected in {image_name}")
+        if face_encodings is not None:
+            if len(face_encodings) > 0:
+                encodings_dict[image_name] = face_encodings
+            else:
+                print(f"No face detected in {image_name}")
     return encodings_dict
 
 def write_encodings_to_csv(encodings_dict:dict, csv_filename:Path)->None:
@@ -95,6 +96,31 @@ def write_encodings_to_csv(encodings_dict:dict, csv_filename:Path)->None:
         for image_name, embedding in encodings_dict.items():
             writer.writerow([image_name, embedding])
 
+def add_encoding_to_csv(image_name: str, encoding: np.ndarray, csv_filename: Path) -> None:
+    """
+    Add a new encoding to an existing CSV file.
+
+    Args:
+        image_name (str): Name of the image.
+        encoding (np.ndarray): The encoding to be added.
+        csv_filename (Path): Path to the CSV file containing image encodings.
+
+    Returns:
+        None
+    """
+    # Convert the encoding array to a string representation
+
+    # Check if the CSV file exists
+    if not csv_filename.exists():
+        print("Error: CSV file does not exist.")
+        return
+
+    # Append the new encoding to the CSV file
+    with open(csv_filename, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([image_name, encoding])
+    print(f"Encoding added to {csv_filename}")
+
 
 if __name__=="__main__":
     # Usage
@@ -110,5 +136,5 @@ if __name__=="__main__":
     # print(f"encodings saved to {csv_filename}")
 
     # Read encodings from the CSV file
-    image_encoding=get_image_encoding(Path("images/messi.jpg"))
-    print( image_encoding.shape )
+    encodings=extract_encodings(Path("images"))
+    print( encodings )

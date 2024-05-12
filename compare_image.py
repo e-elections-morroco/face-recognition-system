@@ -85,12 +85,12 @@ def compare_face_use_csv_encoding(known_image_name: str, unknown_image_path: Pat
 if __name__=="__main__":
     import time
     start = time.time()
-    print( compare_face_use_csv_encoding("ouail.jpg",Path("images/messi.jpg"),Path("encodings.csv")))
+    print( compare_face_use_csv_encoding("ouail.jpg",Path("images/unknown.jpg"),Path("encodings.csv")))
     end = time.time()
     print("Time:",end-start)
 
     start = time.time()
-    print(compare_faces(Path("images/unknown.jpg"),Path("images/messi.jpg")))
+    print(compare_faces(Path("images/ouail.jpg"),Path("images/unknown.jpg")))
     end = time.time()
     print("Time:",end-start)
     
