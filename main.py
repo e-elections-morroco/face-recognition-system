@@ -1,55 +1,57 @@
+import face_recognition
 import cv2
+from pathlib import Path
 
-def face_detection(save_path='mohammed.jpg'):
-    # Load the pre-trained face detection model
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+def compare_faces(known_image_path: Path, unknown_image_path: Path) -> bool | None:
+    """
+    Compare faces in two images.
 
-    # Open the default camera (usually webcam)
-    cap = cv2.VideoCapture(0)
+    Args:
+        known_image_path (Path): Path to the image file containing the known face.
+        unknown_image_path (Path): Path to the image file containing the unknown face.
 
-    if not cap.isOpened():
-        print("Error: Unable to open camera.")
-        return 0
+    Returns:
+        bool | None: True if faces match, False if faces don't match, None if there's an error.
 
-    num_faces_detected = 0
+    Raises:
+        None
 
-    while True:
-        # Capture frame-by-frame
-        ret, frame = cap.read()
+    Examples:
+        >>> known_image_path = Path("ouail.jpg")
+        >>> unknown_image_path = Path("messi.jpeg")
+        >>> result = compare_faces(known_image_path, unknown_image_path)
+        >>> if result is not None:
+        >>>     print("Face match:", result)
+    """
+    if not known_image_path.exists() or not unknown_image_path.exists():
+        print("Error: One or both image files do not exist.")
+        return None
+    try:
+        known_image = cv2.imread(str(known_image_path))
+        unknown_image = cv2.imread(str(unknown_image_path))
+        
+        if known_image is None or unknown_image is None:
+            print("Error: Could not read the image file(s).")
+            return None
 
-        if not ret:
-            print("Error: Unable to capture frame.")
-            break
+        # Proceed with face encoding if images loaded successfully
+        known_encoding = face_recognition.face_encodings(known_image)[0]
+        unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
+        results = face_recognition.compare_faces([known_encoding], unknown_encoding)
+        return results[0]
+    except IndexError:
+        print("No faces detected in one of the images.")
+        return None
 
-        # Convert frame to grayscale
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+# Usage
+known_image_path = Path("ouail.jpg")
+unknown_image_path = Path("messi.jpeg")
+result = compare_faces(known_image_path, unknown_image_path)
+if result is not None:
+    print("Face match (ouail,messi):", result)
 
-        # Detect faces in the grayscale frame
-        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
 
-        # Draw rectangles around the detected faces
-        for (x, y, w, h) in faces:
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
-
-        # Display the resulting frame
-        cv2.imshow('Face Detection', frame)
-
-        # Check for 'q' key press to exit
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-        # If a face is detected, save the photo
-        if len(faces) > 0:
-            cv2.imwrite(save_path, frame)
-            print("Face detected! Photo saved as", save_path)
-            num_faces_detected = len(faces)
-            break
-
-    # Release the capture
-    cap.release()
-    cv2.destroyAllWindows()
-
-    return num_faces_detected
-
-num_faces = face_detection()
-print("Number of faces detected:", num_faces)
+unknown_image_path = Path("unknown.jpeg")
+result = compare_faces(known_image_path, unknown_image_path)
+if result is not None:
+    print("Face match (ouail,unknown):", result)
