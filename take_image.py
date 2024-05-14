@@ -2,7 +2,16 @@ import cv2
 from pathlib import Path
 
 
-def take_image(image_path: Path = Path(("temp/captured_photo.jpg"))):
+def take_image(image_path: Path = Path(("temp/captured_photo.jpg")))->None:
+    """
+    Takes a photo using the webcam when a single face with two eyes, one nose, and one mouth is detected.
+
+    Parameters:
+        image_path (Path): The path to save the captured photo.
+
+    Returns:
+        None
+    """
     # Load pre-trained face and eye cascade classifiers
     # Load the Haar cascades for face, eyes, nose, and mouth
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
